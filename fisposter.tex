@@ -1,0 +1,108 @@
+\documentclass[final]{beamer}
+\mode<presentation>{
+  \usetheme{PHE_berlin}
+}
+\usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}
+\usepackage[utf8]{inputenc}
+\usepackage{default}
+
+\usepackage[british]{babel}
+\usepackage{amsmath,amsthm, amssymb, latexsym}
+\usepackage{times}\usefonttheme{professionalfonts}  % times is obsolete
+\usefonttheme[onlymath]{serif}
+\boldmath
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xspace}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{headline}{fg=white,bg=comp_blue}
+
+\setbeamertemplate{headline}{  
+  \leavevmode
+
+  \begin{beamercolorbox}[wd=\paperwidth]{headline}
+				\centering
+        \vskip2ex
+        \usebeamercolor{title in headline}{\color{fg}\textbf{\LARGE{\inserttitle}}\\[1ex]}
+        \usebeamercolor{author in headline}{\color{fg}\large{\insertauthor}\\[1ex]}
+        \usebeamercolor{institute in headline}{\color{fg}\normalsize{\insertinstitute}\\[1ex]}
+  \end{beamercolorbox}
+  
+  \begin{beamercolorbox}[wd=\paperwidth]{lower separation line head}
+    \rule{0pt}{2pt}
+  \end{beamercolorbox}
+}
+
+\title[AMR trends in respiratory isolates]{Trends in the antibiotic susceptibilities of \textit{Haemophilus influenzae}, \textit{Streptococcus pneumoniae} and \textit{Staphylococcus aureus} from respiratory isolates in England, Wales and Northern Ireland, 2008-2013}
+\author{Simon Thelwall\inst{1}
+\and
+Rebecca Guy\inst{1}
+\and Katherine L Henderson\inst{1}
+\and Macey L Murray\inst{2}
+\and Mike Sharland\inst{3}
+\and Berit Muller-Pebody\inst{1} 
+\and Alan Johnson\inst{1}}
+
+\institute[Public Health England] % (optional, but mostly needed)
+{
+  \inst{1}%
+  Department of Healthcare Associated Infections and Antimicrobial Resistance, Centre for Disease Surveillance and Control, Public Health England
+  \\
+  \inst{2}%
+  Centre for Paediatric Pharmacy Research, Department of Practice and Policy, UCL School of Pharmacy, University College London, London, UK
+  \\
+  \inst{3}%
+  Paediatric Infectious Diseases Unit, St George's Hospital NHS Trust, London, United Kingdom
+}
+
+\date[November. 16th, 2013]{November. 16th, 2013}
+
+\begin{document}
+\begin{frame}
+ \begin{columns}[t]
+  \column{.45\linewidth}
+  \begin{block}{Abstract}
+  \begin{description}
+    \item [Objectives] To determine the susceptibility of \textit{Haemophilus influenzae}, \textit{Streptococcus pneumoniae} and \textit{Staphylococcus aureus} to antibiotics recommended for community treatment of bacterial pneumonia.
+   \item[Methods] Antibiotic susceptibility data for \textit{H. influenzae}, \textit{S. pneumoniae} and \textit{S. aureus} from sputum isolates reported between January 2008 and June 2013 were extracted from the Public Health England microbiology database of clinically relevant infections. 
+   Data were restricted to isolates from hospital outpatients or specimens referred by General Practitioners for patients in England, Wales and Northern Ireland.
+   Multivariable Poisson regression was performed to test associations between calendar time and number of resistant isolates reported.
+   \item[Results] Data on 180 499 isolates were extracted. 
+   There was a consistent increase in the number of isolates reported over the five year period for each organism (\textit{H. influenzae} incident rate ratio 1.11 per year, p\textless0.001, \textit{S. aureus} IRR 1.04, p\textless0.001, \textit{S. pneumoniae} IRR 1.04, p\textless0.001). 
+   Resistance to the empiric treatment ampicillin/amoxicillin increased for all three organisms between 2008 and 2013 (\textit{H. influenzae} 23.4\% to 26.3\%, IRR: 1.03, p\textless0.001, \textit{S. aureus} 75.0\% to 80.2\%, IRR: 1.01, p=0.141 and \textit{S. pneumoniae} 2.1\% to 3.9\%, IRR 1.12, p=0.001). 
+   Resistance among \textit{S. pneumoniae} isolates rose from 13.4\% to 18.7\% for clarithromycin (IRR 1.10, p\textless0.001), from 11.7\% to 19.5\% for erythromycin (IRR 1.13, p\textless0.001) and from 1.9\% to 2.9\% for any recommended cephalosporin (IRR: 1.41, p=0.003).
+   \item[Conclusion] Decreasing susceptibility to recommended antibiotics for bacterial pneumonia is a cause for concern and may impact on the formulation of national guidelines. 
+  \end{description}
+  \end{block}
+  
+  \begin{block}{Introduction}
+   Current guidelines for the empiric treatment of bacterial pneumonia in the community recommend either amoxicillin, or, if not tolerated, doxycycline or clarithromycin.\cite{Lim2009}   
+   \end{block}
+  
+  \begin{block}{Methods}
+   Changes in the trend in the number of isolates reported, and the proportion of isolates resistant to given antibiotics were tested using multivariable logistic regression. 
+   All analyses were performed using R and code can be found at \url{}.
+  \end{block}
+  
+  \column{.45\linewidth}
+    \begin{block}{Results}
+   
+  \end{block}
+  
+  \begin{block}{Discussion}
+   
+  \end{block}
+  
+  \begin{block}{Conclusions}
+   
+  \end{block}
+  
+  \begin{block}{References}
+   \bibliographystyle{plain}
+\bibliography{fis2013}
+  \end{block}
+ \end{columns}
+
+\end{frame}
+
+\end{document}
