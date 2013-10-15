@@ -81,12 +81,20 @@ Rebecca Guy\inst{1}
   \end{block}
   
   \begin{block}{Introduction}
-   Current guidelines for the empiric treatment of bacterial pneumonia in the community recommend either amoxicillin, or, if not tolerated, doxycycline or clarithromycin.\cite{Lim2009}   
+   Current guidelines for the empiric treatment of bacterial pneumonia in the community recommend either amoxicillin, or, if not tolerated, doxycycline or clarithromycin.\cite{Lim2009}
+   The selection of appropriate empiric therapy requires knowledge of the most likely causative organism and its' likely susceptibility to antimicrobial agents. 
    \end{block}
   
   \begin{block}{Methods}
-   Changes in the trend in the number of isolates reported, and the proportion of isolates resistant to given antibiotics were tested using multivariable logistic regression. 
-   All analyses were performed using R and code can be found at \url{https://github.com/simonthelwall/fis2013}.
+   Data on respiratory isolates of \textit{H.influenzae}, \textit{S. aureus} and \textit{S. pneumoniae} reported to the LabBase2 database between January 2008 and June 2013 were extracted. 
+   Data were restricted to isolates from hospital outpatient and general practice patients in England, Wales and Northern Ireland.
+   Isolates were considered resistant if local laboratory staff had recorded the susceptibility of the isolate to a given antibiotic as intermediate or resistant. 
+   Where multiple values were recorded for the same isolate and antibiotic, resistant reports took precedence over susceptible reports. 
+   Multivariable Poisson regression was performed to test associations between calendar time and number of resistant isolates reported.
+   %% Need information on interactions here. 
+   Age, sex, year, calendar quarter and region were considered potential confounders and were adjusted for accordingly.
+   Interactions between age and sex were tested for using likelihood ratio tests. 
+   All analyses were performed using R version 3.0.0 and code can be found at \url{https://github.com/simonthelwall/fis2013}.
   \end{block}
   
   \column{.45\linewidth}
