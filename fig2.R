@@ -39,6 +39,21 @@ m.yr.trend$sa.cef[(m.yr.trend$organism.name == "STAPHYLOCOCCUS AUREUS" & m.yr.tr
 m.yr.trend <- subset(m.yr.trend, sa.cef==0)
 m.yr.trend$sa.cef <- NULL
 
+# Figure 2:  trend in resistances by organism
+
+yr.trend <- ddply(df, .(year, organism.name), summarise, 
+                  ampamox.tested = sum(ampamox.tested, na.rm = TRUE), 
+                  ampamox.resistant = sum(ampamox.resistant, na.rm = TRUE),
+                  cla.tested = sum(cla.tested, na.rm = TRUE), cla.resistant = sum(cla.resistant, na.rm = TRUE),
+                  dox.tested = sum(dox.tested, na.rm = TRUE), dox.resistant = sum(dox.resistant, na.rm = TRUE),
+                  rec_cef.tested = sum(rec.cef.tested, na.rm = TRUE), 
+                  rec_cef.resistant = sum(rec.cef.resistant, na.rm = TRUE))
+
+m.yr.trend <- melt(yr.trend)
+m.yr.trend$abx <- sub("\.\w+$","", m.yr.trend$variable)
+m.yr.trend$tested <- grepl("tested", m.yr.trend$variable)
+m.yr.trend$resistant <- grepl("resistant", m.yr.trend$variable)
+
 f2 <- ggplot(m.yr.trend, aes(x = year, y = value, group = variable)) + facet_wrap(~organism.name) +
   geom_line(aes(colour = variable)) + geom_errorbar(ymax = )
 f2
