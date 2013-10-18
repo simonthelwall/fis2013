@@ -8,7 +8,7 @@ yr.trend <- ddply(df, .(year, organism.name), summarise,
                   rec_cef.tested = sum(rec.cef.tested, na.rm = TRUE), 
                   rec_cef.resistant = sum(rec.cef.resistant, na.rm = TRUE))
 
-m.yr.trend <- melt(yr.trend)
+m.yr.trend <- melt(yr.trend, id.vars = c("year", "organism.name"))
 m.yr.trend$abx <- sub("\\.\\w+$","", m.yr.trend$variable)
 m.yr.trend$tested <- grepl("tested", m.yr.trend$variable)
 m.yr.trend$tested[m.yr.trend$tested == "TRUE"] <- "tested"
