@@ -39,10 +39,14 @@ yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "rec_cef"] <- "Any recommended \n
 f2 <- ggplot(yr.trend.2, aes(x = Year, y = pc.resistant, group = Antibiotic)) + facet_wrap(~Organism) +
   geom_line(aes(colour = Antibiotic)) + 
   geom_errorbar(aes(ymax = uci, ymin = lci, colour = Antibiotic), width = 0.25)
-png("figure2.png", width = 1530, height = 2295, res = 300)
-f2 + theme(strip.text.x = element_text(face = 'italic'), legend.position = c(0.9,0.9), 
-           legend.background = element_rect(fill = "#ffffffaa", colour = NA)) + 
+
+png("figure2.png", width = 1530, height = 1912, res = 300)
+f2 + theme_grey(base_size = 10) + 
+  theme(strip.text.x = element_text(face = 'italic'), legend.position = c(0.84,0.86), 
+        legend.background = element_rect(fill = "#ffffffaa", colour = NA), 
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) + 
   scale_y_continuous("Per cent resistant", limits = c(0,100))
 dev.off()
+
 rm(m.yr.trend, yr.trend, yr.trend.2, f2)
 gc()
