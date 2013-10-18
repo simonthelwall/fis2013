@@ -1,46 +1,5 @@
 # Figure 2:  trend in resistances by organism
 
-yr.trend <- ddply(df, .(year, organism.name), summarise, n = sum(uniq), 
-                   ampamox.tested = sum(ampamox.tested, na.rm = TRUE), 
-                   ampamox.resistant = sum(ampamox.resistant, na.rm = TRUE),
-                   cla.tested = sum(cla.tested, na.rm = TRUE), cla.resistant = sum(cla.resistant, na.rm = TRUE),
-                   dox.tested = sum(dox.tested, na.rm = TRUE), dox.resistant = sum(dox.resistant, na.rm = TRUE),
-                   rec.cef.tested = sum(rec.cef.tested, na.rm = TRUE), 
-                   rec.cef.resistant = sum(rec.cef.resistant, na.rm = TRUE))
-
-yr.trend$pc.ampamox.res <- percent2(yr.trend$ampamox.resistant, yr.trend$ampamox.tested)
-yr.trend$pc.ampamox.res.lci <- binom.confint(yr.trend$ampamox.resistant, yr.trend$ampamox.tested, methods = "exact")$lower*100
-yr.trend$pc.ampamox.res.uci <- binom.confint(yr.trend$ampamox.resistant, yr.trend$ampamox.tested, methods = "exact")$upper*100
-
-yr.trend$pc.cla.res <- percent2(yr.trend$cla.resistant, yr.trend$cla.tested)
-yr.trend$pc.cla.res.lci <- binom.confint(yr.trend$cla.resistant, yr.trend$cla.tested, methods = "exact")$lower*100
-yr.trend$pc.cla.res.uci <- binom.confint(yr.trend$cla.resistant, yr.trend$cla.tested, methods = "exact")$upper*100
-
-yr.trend$pc.dox.res <- percent2(yr.trend$dox.resistant, yr.trend$dox.tested)
-yr.trend$pc.dox.res.lci <- binom.confint(yr.trend$dox.resistant, yr.trend$dox.tested, methods = "exact")$lower*100
-yr.trend$pc.dox.res.uci <- binom.confint(yr.trend$dox.resistant, yr.trend$dox.tested, methods = "exact")$upper*100
-
-yr.trend$pc.rec.cef.res <- percent2(yr.trend$rec.cef.resistant, yr.trend$rec.cef.tested)
-yr.trend$pc.rec.cef.res.lci <- binom.confint(yr.trend$rec.cef.resistant, yr.trend$rec.cef.tested, methods = "exact")$lower*100
-yr.trend$pc.rec.cef.res.uci <- binom.confint(yr.trend$rec.cef.resistant, yr.trend$rec.cef.tested, methods = "exact")$upper*100
-
-yr.trend <- subset(yr.trend, select = c("year", "organism.name", "pc.ampamox.res", "pc.cla.res", "pc.dox.res", 
-                                          "pc.rec.cef.res", "pc.ampamox.res.lci", "pc.ampamox.res.uci",
-                                        "pc.cla.res.lci", "pc.cla.res.uci", "pc.dox.res.lci", "pc.dox.res.uci",
-                                        "pc.rec.cef.res.lci", "pc.rec.cef.res.uci"))
-
-yr.trend
-m.yr.trend <- melt(yr.trend)
-m.yr.trend$sa.cef <- 0
-m.yr.trend$sa.cef[(m.yr.trend$organism.name == "STAPHYLOCOCCUS AUREUS" & m.yr.trend$variable == "pc.rec.cef.res") |
-                    (m.yr.trend$organism.name == "STAPHYLOCOCCUS AUREUS" & m.yr.trend$variable == "pc.rec.cef.res.lci") |  
-                    (m.yr.trend$organism.name == "STAPHYLOCOCCUS AUREUS" & m.yr.trend$variable == "pc.rec.cef.res.uci")] <- 1
-
-m.yr.trend <- subset(m.yr.trend, sa.cef==0)
-m.yr.trend$sa.cef <- NULL
-
-# Figure 2:  trend in resistances by organism
-
 yr.trend <- ddply(df, .(year, organism.name), summarise, 
                   ampamox.tested = sum(ampamox.tested, na.rm = TRUE), 
                   ampamox.resistant = sum(ampamox.resistant, na.rm = TRUE),
@@ -50,10 +9,40 @@ yr.trend <- ddply(df, .(year, organism.name), summarise,
                   rec_cef.resistant = sum(rec.cef.resistant, na.rm = TRUE))
 
 m.yr.trend <- melt(yr.trend)
-m.yr.trend$abx <- sub("\.\w+$","", m.yr.trend$variable)
+m.yr.trend$abx <- sub("\\.\\w+$","", m.yr.trend$variable)
 m.yr.trend$tested <- grepl("tested", m.yr.trend$variable)
+m.yr.trend$tested[m.yr.trend$tested == "TRUE"] <- "tested"
 m.yr.trend$resistant <- grepl("resistant", m.yr.trend$variable)
+m.yr.trend$resistant[m.yr.trend$resistant == "TRUE"] <- "resistant"
+m.yr.trend$variable <- NULL
 
-f2 <- ggplot(m.yr.trend, aes(x = year, y = value, group = variable)) + facet_wrap(~organism.name) +
-  geom_line(aes(colour = variable)) + geom_errorbar(ymax = )
-f2
+yr.trend.2 <- dcast(m.yr.trend, year + organism.name + abx ~ tested + resistant, value.var = "value")
+names(yr.trend.2) <- c("Year", "Organism", "Antibiotic", "Resistant", "Tested")
+yr.trend.2$Organism <- simpleCap(yr.trend.2$Organism)
+yr.trend.2$pc.resistant <- binom.confint(yr.trend.2$Resistant, yr.trend.2$Tested, methods = "exact")$mean*100
+yr.trend.2$lci <- binom.confint(yr.trend.2$Resistant, yr.trend.2$Tested, methods = "exact")$lower*100
+yr.trend.2$uci <- binom.confint(yr.trend.2$Resistant, yr.trend.2$Tested, methods = "exact")$upper*100
+
+# Very low numbers of S. aureus tested against cephalosporins anyway, no point including. 
+yr.trend.2$drop <- 0
+yr.trend.2$drop[yr.trend.2$Organism == "Staphylococcus aureus" & yr.trend.2$Antibiotic == "rec_cef"] <- 1
+yr.trend.2 <- yr.trend.2[yr.trend.2$drop == 0,]
+yr.trend.2$drop <- NULL
+head(yr.trend.2)
+
+yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "ampamox"] <- "Ampicillin"
+yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "cla"] <- "Clarithromycin"
+yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "dox"] <- "Doxycylcine"
+yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "rec_cef"] <- "Any recommended \n cephalosporin"
+#yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "Any recommended \\n cephalosporin"] <- "Any recommended \n cephalosporin" #oops
+
+f2 <- ggplot(yr.trend.2, aes(x = Year, y = pc.resistant, group = Antibiotic)) + facet_wrap(~Organism) +
+  geom_line(aes(colour = Antibiotic)) + 
+  geom_errorbar(aes(ymax = uci, ymin = lci, colour = Antibiotic), width = 0.25)
+png("figure2.png", width = 1530, height = 2295, res = 300)
+f2 + theme(strip.text.x = element_text(face = 'italic'), legend.position = c(0.9,0.9), 
+           legend.background = element_rect(fill = "#ffffffaa", colour = NA)) + 
+  scale_y_continuous("Per cent resistant", limits = c(0,100))
+dev.off()
+rm(m.yr.trend, yr.trend, yr.trend.2, f2)
+gc()
