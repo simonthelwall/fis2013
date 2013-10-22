@@ -5,7 +5,7 @@
 %\usepackage[orientation=portrait,size=a0,scale=1.4,debug]{beamerposter}
 \usepackage[size=custom,width=100,height=100,scale=1, debug]{beamerposter}
 \usepackage[utf8]{inputenc}
-\usepackage{default}
+%\usepackage{default}
 
 \usepackage[british]{babel}
 \usepackage{amsmath,amsthm, amssymb, latexsym}
@@ -14,7 +14,13 @@
 \boldmath
 \usepackage{booktabs}
 \usepackage{graphicx}
+\graphicspath{E:/My Documents B/MSc stuff/SME/fis2013}
 \usepackage{xspace}
+\usepackage[overlay, absolute]{textpos}
+\usepackage{tikz}
+\linespread{1.6}
+
+
 \setbeamertemplate{navigation symbols}{}
 \setbeamercolor{headline}{fg=white,bg=comp_blue}
 
@@ -27,6 +33,7 @@
   \leavevmode
 
   \begin{beamercolorbox}[wd=\paperwidth]{headline}
+
 				\centering
         \vskip2ex
         \usebeamercolor{title in headline}{\color{fg}\textbf{\LARGE{\inserttitle}}\\[1ex]}
@@ -37,7 +44,15 @@
   \begin{beamercolorbox}[wd=\paperwidth]{lower separation line head}
     \rule{0pt}{2pt}
   \end{beamercolorbox}
+%  \end{columns}
 }
+
+
+
+%\addtobeamertemplate{headline}{}{%
+%\begin{tikzpicture}[remember picture,overlay]
+%\node[anchor=north east,yshift=2pt] at (current page.north east) %{\includegraphics[height=0.8cm]{white_phe_logo.png}};
+%\end{tikzpicture}}
 
 \title[AMR trends in respiratory isolates]{Trends in the antibiotic susceptibilities of \textit{Haemophilus influenzae}, \textit{Streptococcus pneumoniae} and \textit{Staphylococcus aureus} from respiratory isolates in England, Wales and Northern Ireland, 2008-2013}
 \author{Simon Thelwall\inst{1}
@@ -64,9 +79,12 @@ Rebecca Guy\inst{1}
 \date[November. 16th, 2013]{November. 16th, 2013}
 
 \begin{document}
+\begin{textblock}{6}(0.1,0.2)
+\includegraphics[scale=1]{white_phe_logo.png}
+\end{textblock}
 \begin{frame}
  \begin{columns}[t]
-  \column{.45\linewidth}
+  \column{.3\linewidth}
   \begin{block}{Abstract}
   \begin{description}
     \item [Objectives] To determine the susceptibility of \textit{Haemophilus influenzae}, \textit{Streptococcus pneumoniae} and \textit{Staphylococcus aureus} to antibiotics recommended for community treatment of bacterial pneumonia.
@@ -82,46 +100,83 @@ Rebecca Guy\inst{1}
   \end{block}
   
   \begin{block}{Introduction}
-   Current guidelines for the empiric treatment of bacterial pneumonia in the community recommend either amoxicillin, or, if not tolerated, doxycycline or clarithromycin.\cite{Lim2009}
-   The selection of appropriate empiric therapy requires knowledge of the most likely causative organism and its' likely susceptibility to antimicrobial agents. 
+  Lower respiratory tract infection is a common cause of morbidity and mortality in the UK. \cite{Davies2012}
+   Current guidelines for the empiric treatment of bacterial pneumonia in the community recommend either amoxicillin, or, if not tolerated, doxycycline or clarithromycin. \cite{Lim2009}
+   The selection of appropriate empiric therapy requires knowledge of the most likely causative organism and its' likely susceptibility to antimicrobial agents.
+   Previous work by our group found evidence for declining susceptibility to ampicillin/amoxicillin in \textit{H.influenzae}, \textit{S. aureus} and \textit{S. pneumoniae} and declining susceptibility to macrolides among \textit{H. influenzae} isolates. \cite{Blackburn2011}
    \end{block}
   
   \begin{block}{Methods}
    Data on respiratory isolates of \textit{H.influenzae}, \textit{S. aureus} and \textit{S. pneumoniae} reported to the LabBase2 database between January 2008 and June 2013 were extracted. 
-   Data were restricted to isolates from hospital outpatient and general practice patients in England, Wales and Northern Ireland.
+   Isolates from the upper respiratory tract (mouth, larynx, etc) were excluded.
+   Data were restricted to isolates from hospital outpatient and general practice patients in England, Wales and Northern Ireland.\\
    Isolates were considered resistant if local laboratory staff had recorded the susceptibility of the isolate to a given antibiotic as intermediate or resistant. 
-   Where multiple values were recorded for the same isolate and antibiotic, resistant reports took precedence over susceptible reports. 
-   Multivariable Poisson regression was performed to test associations between calendar time and number of resistant isolates reported.
+   Where multiple values were recorded for the same isolate and antibiotic, resistant reports took precedence over susceptible reports. \\
+   Multivariable Poisson regression with robust standard errors was performed to test associations between calendar time and number of resistant isolates reported.
    %% Need information on interactions here. 
    Age, sex, year, calendar quarter and region were considered potential confounders and were adjusted for accordingly.
    Interactions between age and sex were tested for using likelihood ratio tests. 
    All analyses were performed using R version 3.0.0 and code can be found at \url{https://github.com/simonthelwall/fis2013}.
   \end{block}
   
-  \column{.45\linewidth}
+  \column{.3\linewidth}
     \begin{block}{Results}
    Between January 2008 and June 2013 180 499 isolates were reported by \textit{n} labs. 
-   Over this time period, there was a consistent increase in the numbers of isolates reported for each organism (% ref to figure 1 here).
-   Resistance to the empiric treatment ampicillin/amoxicillin increased for all three organisms between 2008 and 2013 (\textit{H. influenzae} 23.4\% to 26.3\%, IRR: 1.03, p\textless0.001, \textit{S. aureus} 75.0\% to 80.2\%, IRR: 1.01, p=0.141 and \textit{S. pneumoniae} 2.1\% to 3.9\%, IRR 1.12, p=0.001).
-   Overall x\% of isolates were resistant to amoxicillin in 2013. % Need data for this. Table/figure?
+   \textit{x}(y \%) isolates were from sputum and \textit{x}(y \%) were from patients presenting to GPs. \\
+   Between January 2008 and June 2013, there was a consistent increase in the numbers of isolates reported for each organism (figure \ref{fig1}).
+   \begin{figure}
+   \includegraphics[width = \textwidth]{figure1.png}
+   \caption{Trend in LRTI isolates from community samples reported to LabBase. England, Wales and Northern Ireland 2008-2013}
+   \label{fig1}
+   \end{figure}
+   Resistance to the empiric treatment ampicillin/amoxicillin increased for all three organisms between 2008 and 2013 (\textit{H. influenzae} 23.4\% to 26.3\%, IRR: 1.03, p\textless0.001, \textit{S. aureus} 75.0\% to 80.2\%, IRR: 1.01, p=0.141 and \textit{S. pneumoniae} 2.1\% to 3.9\%, IRR 1.12, p=0.001, figure \ref{fig2} and table \ref{table1}).\\
+   \vspace{1 cm}
+   \begin{table}
+   \centering
+   \begin{tabular}{lrrrr}
+   \toprule
+    & \multicolumn{4}{c}{Antimicrobial}\\
+    \cline{2-5}
+   Organism & Ampcillin & \shortstack{Any recommended \\ cephalosporin} & Clarithromycin & Doxycycline\\
+   \midrule
+	   \textit{H. influenzae} & 1.03 (-) & & & \\
+	   \textit{S. aureus} & 1.01 (-) & & & \\
+	   \textit{S. pneumoniae} & 1.03 (-) & & & \\
+   \bottomrule
+   \end{tabular}
+   \caption{Incident rate ratios for annual change in susceptibility to recommended antimicrobials, England, Wales and Northern Ireland 2008-2013.
+   Adjusted for calendar quarter, laboratory region, specimen source, male sex and patient age.}
+   \label{table1}
+   \end{table}
+\vspace{1 cm}
+   Overall, x\% of isolates were resistant to amoxicillin in 2013. % Need data for this. Table/figure?
    % Figure 2 resistance to amoxicillin
    % Figure 3 resistance to tetracyclines (in particular clarithromycin)
    % Figure 4 resistance to cephalosporins 
    % Trends by age and sex? What is driving increase in resistance?
   \end{block}
   
+  \column{.3\linewidth}
+  \begin{block}{\textcolor{comp_blue}{R}}
+  \begin{figure}
+  \includegraphics[width = \textwidth]{figure2.png}
+  \caption{Trends in resistance to antimicrobials recommended for empiric community therapy of lower respiratory tract infection. England, Wales and Northern Ireland 2008-2013}
+  \end{figure}
+  \label{fig2}  
+  \end{block}
+
   \begin{block}{Discussion}
   Over the last five years we have observed increasing resistance to the first line antibiotic recommended for treating bacterial pneumonia in the community.
-  Among S. pneumoniae isolates there have been rises in resistance to a wide range of antibiotics. 
+  Among \textit{S. pneumoniae} isolates there have been rises in resistance to a wide range of antibiotics. 
   Whether the increases in resistances observed here are due to genuine increases in resistance or whether they are due to increased testing and reporting is difficult to determine. 
   % comparison with other studies here. BSAC?
-  The increase in resistance to a range of antibiotics among S. pneumoniae is unexpected. 
-  The 17-valent vaccine against S. pneumoniae was introduced in 20xx and previous studies have noted a decline in resistance following the introduction of previous vaccines. % ref our work here. 
-  Utilising data on S. pneumoniae serotypes collected by Public Health England might shed further light on this matter. 
+  The increase in resistance to a range of antibiotics among \textit{S. pneumoniae} is unexpected. 
+  The 17-valent vaccine against \textit{S. pneumoniae} was introduced in 20xx and previous studies have noted a decline in resistance following the introduction of previous vaccines. % ref our work here. 
+  Utilising data on \textit{S. pneumoniae} serotypes collected by Public Health England might shed further light on this matter. 
   \end{block}
   
   \begin{block}{Conclusions}
-  Increases in resistance among organisms isolated from respiratory isolates to first-line antibiotics is a cause for concern. 
+  Increases in resistance among organisms isolated from respiratory isolates to first-line antibiotics is a cause for concern and may impact on the formulation of national guidelines.  
   
    
   \end{block}
