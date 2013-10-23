@@ -1,0 +1,17 @@
+% latex table generated in R 3.0.0 by xtable 1.7-1 package
+% Wed Oct 23 10:52:46 2013
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlllll}
+  \hline
+ & organism & Ampicillin & Any recommended cephalosporin & Clarithromycin & Doxycycline \\ 
+  \hline
+1 & H. influenzae & 1.03 (1.02 - 1.03) & 1.08 (1.05 - 1.10) & 1.01 (1.01 - 1.01) & 0.84 (0.77 - 0.93) \\ 
+  2 & S. aureus & 1.01 (1.00 - 1.03) & 1.00 (0.95 - 1.06) & 0.99 (0.96 - 1.02) & 1.18 (1.06 - 1.31) \\ 
+  3 & S. pneumoniae & 1.12 (1.05 - 1.20) & 1.05 (0.95 - 1.16) & 1.10 (1.07 - 1.14) & 1.19 (1.10 - 1.28) \\ 
+   \hline
+\end{tabular}
+\caption{Incident rate ratios for annual change in susceptibility to recommended antimicrobials, England, Wales and Northern Ireland 2008-2013.
+   Adjusted for calendar quarter, laboratory region, specimen source, male sex and patient age.} 
+\label{table1}
+\end{table}
