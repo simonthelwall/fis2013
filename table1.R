@@ -204,7 +204,7 @@ c.col <- xtable(c.col,
    Adjusted for calendar quarter, laboratory region, specimen source, male sex and patient age.", 
                 label = "table1")
 sink("table1.txt")
-print(c.col)
+print(c.col, include.rownames = FALSE, booktabs = TRUE)
 sink()
 rm(ampamox.robust, cef.robust, cla.robust, dox.robust, col, col2, c.col, cef.m2, cla.m2, ampamox.m2, dox.m2, 
    ampamox.m)
