@@ -37,7 +37,7 @@ lincom <- function(svycontrast_object){
   }
 }
 
-sehac<-function(fit,vcov=sandwich){ #Convenience function for robust standard erros
+sehac<-function(fit,vcov=sandwich){ #Convenience function for robust standard errors
   coeftest(fit,vcov)
 }
 
@@ -98,7 +98,7 @@ table(ampamox$ampamox.resistant, useNA = "ifany")
 ampamox.m <- glm(ampamox.resistant ~ year + factor(quarter) + postcode.derived.region.name +
                    specimen.source.type.description + male + age2, data = ampamox, family = "poisson")
 summary(ampamox.m)
-orWrapper(ampamox.m)
+#orWrapper(ampamox.m)
 
 ampamox.m <- glm(ampamox.resistant ~ year + organism.name + factor(quarter) + postcode.derived.region.name +
                    specimen.source.type.description + male + age2, data = ampamox, family = "poisson")
@@ -109,7 +109,8 @@ epicalc::lrtest(ampamox.m, ampamox.m2)
 
 svycontrast(ampamox.m2, c("year" = 1, "year:organism.nameSTAPHYLOCOCCUS AUREUS" =1))
 
-ampamox.robust <- funinteff(ampamox.m2, "year")
+ampamox.robust <- funinteff(ampamox.m2, "year") # worth noting that due to grep in funinteff estimates for 
+# age in years gets pulled out too. This can be safely dropped. 
 ampamox.robust$z <- ampamox.robust$Estimate/ampamox.robust$SE
 ampamox.robust$p <- 2*pnorm(-abs(ampamox.robust$z))
 rm(ampamox)
@@ -180,4 +181,46 @@ cef.robust$abx <- "Any recommended cephalosporin"
 dox.robust$abx <- "Doxycycline"
 cla.robust$abx <- "Clarithromycin"
 
+# dropping mis-grepped rows
+ampamox.robust <- ampamox.robust[c(1,5,6),]
+cla.robust <- cla.robust[c(1,5,6),]
+dox.robust <- dox.robust[c(1,5,6),]
+cef.robust <- cef.robust[c(1,5,6),]
+
 col <- rbind(ampamox.robust, cef.robust, dox.robust, cla.robust)
+col$organism <- row.names(col)
+row.names(col) <- seq(1,length(col$organism),1)
+col$organism[col$organism == "year" | col$organism == "year1" | col$organism == "year2" | 
+               col$organism == "year3"] <- "H. influenzae"
+col$organism[col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS" | 
+               col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS1" | 
+               col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS2" | 
+               col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS3"] <- "S. aureus"
+col$organism[col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE" | 
+               col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE1" | 
+               col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE2" | 
+               col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE3"] <- "S. pneumoniae"
+
+col$irr <- exp(col$Estimate)
+col$lci <- col$irr / exp(1.96*col$SE)
+col$uci <- col$irr * exp(1.96*col$SE)
+col <- col[,names(col)=="abx" | names(col)=="organism" | names(col)=="irr" | names(col)=="lci" | 
+             names(col)=="uci" | names(col)=="p"]
+col
+col$irr95ci <- paste(sprintf("%.2f", round(col$irr, 2)), " (", sprintf("%.2f", round(col$lci, 2)),
+                     " - ", sprintf("%.2f", round(col$uci, 2)), ")", sep = ""
+)
+col2 <- col[, names(col)=="abx" | names(col)=="organism" | names(col)=="irr95ci"]
+
+c.col <- dcast(col2, organism ~ abx)
+c.col
+names(c.col)[1] <- "Organism"
+c.col <- xtable(c.col, 
+  caption = "Incident rate ratios for annual change in susceptibility to recommended antimicrobials, England, Wales and Northern Ireland 2008-2013.
+   Adjusted for calendar quarter, laboratory region, specimen source, male sex and patient age.", 
+                label = "table1")
+sink("table1.txt")
+print(c.col)
+sink()
+rm(ampamox.robust, cef.robust, cla.robust, dox.robust, col, col2, c.col, cef.m2, cla.m2, ampamox.m2, dox.m2, 
+   ampamox.m)
