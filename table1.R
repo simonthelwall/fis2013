@@ -70,22 +70,6 @@ funinteff<-function(mod,var,vcov=sandwich){ #mod is an lm() object, var is the n
   return(int)
 }
 
-# data manipulation ####
-#df <- subset(df, uniq==1)
-df$org2 <- ""
-df$org2[df$organism.name == "HAEMOPHILUS INFLUENZAE"] <- "H. influenzae"
-df$org2[df$organism.name == "STREPTOCOCCUS PNEUMONIAE"] <- "S. pneumoniae"
-df$org2[df$organism.name == "STAPHYLOCOCCUS AUREUS"] <- "S. aureus"
-
-df$age2 <- df$age.group
-df$age2[df$age.group=="<1 month" | df$age.group=="1-11 months" | df$age.group=="1-4 years" | 
-          df$age.group=="10-14 years" | df$age.group=="15-44 years" | df$age.group=="5-9 years"
-        ] <- "<45 years"
-
-df$male <- 0
-df$male[df$sex=="M"] <- 1
-table(df$sex, df$male)
-df$year <- as.integer(df$year)
 
 #  regressions ####
 ampamox <- subset(df, ampamox.tested == 1 & uniq == 1)
