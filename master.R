@@ -52,7 +52,7 @@ df$specimen.sequence.number <- NULL
 df$earliest.specimen.month.and.year <- NULL
 gc()
 
-# Headline figures ####
+# Headline figures
 # number of labs
 length(levels(factor(df$lab.name)))
 table(df$year, length(levels(factor(df$lab.name))) )
@@ -60,6 +60,8 @@ n.labs <- ddply(df, .(year, quarter), summarise, n = length(levels(factor(lab.na
 n.labs 
 n.labs$yr.qtr <- paste(n.labs$year, n.labs$quarter, sep = "-")
 qplot(x = yr.qtr, y = n, data = n.labs, geom = "point")
+rm(n.labs)
+gc()
 
 # specimen type
 table(df$specimen.type.description, df$uniq)
@@ -72,8 +74,8 @@ table(df$specimen.source.type.description, df$uniq)
 sum(df$uniq[df$specimen.source.type.description == "GENERAL PRACTITIONER"])
 round( (sum(df$uniq[df$specimen.source.type.description == "GENERAL PRACTITIONER"])/sum(df$uniq))*100 , 2)
 
-# figures and tables ####
-source("fig1.R", echo = FALSE)
+
+#source("fig1.R", echo = FALSE)
 
 # Classify resistances
 source("F:\\antimicrobial resistance\\Simon\\thorax2\\non_susceptibility.R")
@@ -108,8 +110,37 @@ rm(abx)
 gc()
 
 # fig 2 ####
-source("fig2.R", echo = FALSE)
+#source("fig2.R", echo = FALSE)
+
+# data manipulation ####
+#df <- subset(df, uniq==1)
+df$org2 <- ""
+df$org2[df$organism.name == "HAEMOPHILUS INFLUENZAE"] <- "H. influenzae"
+df$org2[df$organism.name == "STREPTOCOCCUS PNEUMONIAE"] <- "S. pneumoniae"
+df$org2[df$organism.name == "STAPHYLOCOCCUS AUREUS"] <- "S. aureus"
+
+df$age2 <- df$age.group
+df$age2[df$age.group=="<1 month" | df$age.group=="1-11 months" | df$age.group=="1-4 years" | 
+          df$age.group=="10-14 years" | df$age.group=="15-44 years" | df$age.group=="5-9 years"
+        ] <- "<45 years"
+
+df$male <- 0
+df$male[df$sex=="M"] <- 1
+table(df$sex, df$male)
+df$year <- as.integer(df$year)
+
 
 # table 1 #### incident rate ratios
 source("table1.R", echo = FALSE)
 
+# total number of isolates resistant to ampicillin ####
+table(df$ampamox.tested, df$uniq, dnn = c("Tested", "Uniq"), useNA = "ifany")
+table(df$ampamox.resistant, df$uniq, dnn = c("Tested", "Uniq"), useNA = "ifany")
+sum(df$ampamox.resistant[df$year == 2013], na.rm = TRUE)
+round((sum(df$ampamox.resistant[df$year == 2013], na.rm = TRUE)/
+         sum(df$ampamox.tested[df$year == 2013], na.rm = TRUE))*100, 2)
+binom.confint(sum(df$ampamox.resistant[df$year == 2013], na.rm = TRUE),
+                  sum(df$ampamox.tested[df$year == 2013], na.rm = TRUE), methods = "exact")
+
+# age group analysis ####
+# source("age_analysis.R", echo = FALSE) # No pattern of resistance by age for any organism. 
