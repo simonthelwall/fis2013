@@ -111,16 +111,15 @@ Rebecca Guy\inst{1}
    \end{block}
   
   \begin{block}{Methods}
-   Data on respiratory isolates of \textit{H.influenzae}, \textit{S. aureus} and \textit{S. pneumoniae} reported to the LabBase2 database between January 2008 and June 2013 were extracted. 
-   Isolates from the upper respiratory tract (mouth, larynx, etc) were excluded.
+   Data on isolates of \textit{H. influenzae}, \textit{S. aureus} and \textit{S. pneumoniae} from respiratory samples (sputum, trachea, bronchi, broncioles or alveolar lavage) reported to the LabBase2 database between January 2008 and June 2013 were extracted. 
    Data were restricted to isolates from hospital outpatient and general practice patients in England, Wales and Northern Ireland.\\
    Isolates were considered resistant if local laboratory staff had recorded the susceptibility of the isolate to a given antibiotic as intermediate or resistant. 
-   Where multiple values were recorded for the same isolate and antibiotic, resistant reports took precedence over susceptible reports. \\
+   Where multiple antibiotic susceptibility test results were recorded for the same isolate, a report of resistance took precedence over susceptibility. \\
    Multivariable Poisson regression with robust standard errors was performed to test associations between calendar time and number of resistant isolates reported.
    %% Need information on interactions here. 
    Age, sex, year, calendar quarter and region were considered potential confounders and were adjusted for accordingly.
    Interactions between age and sex were tested for using likelihood ratio tests. 
-   All analyses were performed using R version 3.0.0 and code can be found at \url{https://github.com/simonthelwall/fis2013}.
+   All analyses were performed using R version 3.0.0 and ArcGIS\texttrademark v10 and code can be found at \url{https://github.com/simonthelwall/fis2013}.
   \end{block}
   
   \begin{block}{Results}
@@ -128,7 +127,7 @@ Rebecca Guy\inst{1}
    173 854 (96 \%) isolates were from sputum and 125 968 (70 \%) were from patients presenting to GPs. \\
    Between January 2008 and June 2013, there was a consistent increase in the numbers of isolates reported for each organism (figure \ref{fig:fig1}).\\
 Resistance to the empiric treatment ampicillin/amoxicillin increased for all three organisms between 2008 and 2013 (\textit{H. influenzae} 23.4\% to 26.3\%, IRR: 1.03, p\textless0.001, \textit{S. aureus} 75.0\% to 80.2\%, IRR: 1.01, p=0.141 and \textit{S. pneumoniae} 2.1\% to 3.9\%, IRR 1.12, p=0.001, figure \ref{fig:fig2} and table \ref{tab:table1}).\\
-   Overall, 3354 (25.43\%, 95\% CI 24.69 - 26.18) of all isolates tested in 2013 were resistant to amoxicillin. % Need data for this. Table/figure?
+   Overall, 25.43\% (95\% CI 24.69 - 26.18) of all isolates tested in 2013 (n = 13 189) were resistant to amoxicillin. % Need data for this. Table/figure?
    % Figure 2 resistance to amoxicillin
    % Figure 3 resistance to tetracyclines (in particular clarithromycin)
    % Figure 4 resistance to cephalosporins 
@@ -146,13 +145,12 @@ Resistance to the empiric treatment ampicillin/amoxicillin increased for all thr
 
 
   \begin{block}{Discussion}
-  Over the last five years we have observed increasing resistance to the first line antibiotic recommended for treating bacterial pneumonia in the community.
-  Among \textit{S. pneumoniae} isolates there have been rises in resistance to a wide range of antibiotics. 
-  Whether the increases in resistances observed here are due to genuine increases in resistance or whether they are due to increased testing and reporting is difficult to determine. 
-  % comparison with other studies here. BSAC?
-  The increase in resistance to a range of antibiotics among \textit{S. pneumoniae} is unexpected. 
-  The 13-valent conjugate vaccine against \textit{S. pneumoniae} was introduced  in 2010 for children under 5 years old and previous studies have noted a decline in resistance following the introduction of previous vaccines. % ref here. 
-  Utilising data on \textit{S. pneumoniae} serotypes collected by Public Health England might shed further light on this matter. 
+  Over the last five years we have observed increasing resistance to the first-line antibiotics recommended for treating bacterial pneumonia in the community.
+Among \textit{S. pneumoniae} isolates there have been rises in resistance to a wide range of antibiotics. 
+Whether the increases in resistances observed here are due to genuine increases in resistance or whether they are due to increased testing and reporting is diffcult to determine. 
+The limited regional variation in resistance is perhaps surprising given that a recent study of community LRTI and community-acquired pneumonia (CAP) among older adults found a strong North-South gradient in incidence. \citep{Millett2013}
+However, analysis of regional variation resistance is limited by regional variation in regional reporting to LabBase. 
+Resistance to antimicrobials is known to be associated with serotype in \textit{S. pneumoniae} and further examination of serotype data may provide more information on the recent rises in resistance observed in \textit{S. pneumoniae} isolates.
   \end{block}    
   
   \column{.3\linewidth}
