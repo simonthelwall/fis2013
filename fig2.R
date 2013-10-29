@@ -30,11 +30,13 @@ yr.trend.2 <- yr.trend.2[yr.trend.2$drop == 0,]
 yr.trend.2$drop <- NULL
 head(yr.trend.2)
 
-yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "ampamox"] <- "Ampicillin"
+yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "ampamox"] <- "Ampicillin/\namoxicillin"
 yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "cla"] <- "Clarithromycin"
 yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "dox"] <- "Doxycylcine"
 yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "rec_cef"] <- "Any recommended \n cephalosporin"
 #yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "Any recommended \\n cephalosporin"] <- "Any recommended \n cephalosporin" #oops
+
+yr.trend.2 <- subset(yr.trend.2, Antibiotic != "Any recommended \n cephalosporin")
 
 f2 <- ggplot(yr.trend.2, aes(x = Year, y = pc.resistant, group = Antibiotic)) + facet_wrap(~Organism) +
   geom_line(aes(colour = Antibiotic)) + 
