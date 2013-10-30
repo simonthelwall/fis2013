@@ -73,138 +73,345 @@ funinteff<-function(mod,var,vcov=sandwich){ #mod is an lm() object, var is the n
 
 #  regressions ####
 ampamox <- subset(df, ampamox.tested == 1 & uniq == 1)
-# complete for variables to be adjusted
-# organism, quarter, region, specimen source, male sex + age2
-ampamox <- ampamox[complete.cases(ampamox[,c(2, 16, 17, 14, 9, 46, 45)]),] 
+ampamox <- ampamox[complete.cases(ampamox[,c(2, 18, 14, 10, 43, 44)]),] 
 ampamox$ampamox.resistant[is.na(ampamox$ampamox.resistant)==TRUE] <- 0
 length(ampamox$ampamox.tested)
 table(ampamox$ampamox.resistant, useNA = "ifany")
-ampamox.m <- glm(ampamox.resistant ~ year + factor(quarter) + postcode.derived.region.name +
-                   specimen.source.type.description + male + age2, data = ampamox, family = "poisson")
-summary(ampamox.m)
-#orWrapper(ampamox.m)
 
-ampamox.m <- glm(ampamox.resistant ~ year + organism.name + factor(quarter) + postcode.derived.region.name +
-                   specimen.source.type.description + male + age2, data = ampamox, family = "poisson")
+ampamox.m <- glm(ampamox.resistant ~ year * organism.name + age2 + factor(quarter) + postcode.derived.region.name +
+                   specimen.source.type.description + male, data = ampamox, family = "poisson")
 
-ampamox.m2 <- glm(ampamox.resistant ~ year * organism.name + factor(quarter) + postcode.derived.region.name +
-                    specimen.source.type.description + male + age2, data = ampamox, family = "poisson")
+ampamox.m2 <- glm(ampamox.resistant ~ year * organism.name * age2 + factor(quarter) + postcode.derived.region.name +
+                    specimen.source.type.description + male, data = ampamox, family = "poisson")
 epicalc::lrtest(ampamox.m, ampamox.m2)
 
-svycontrast(ampamox.m2, c("year" = 1, "year:organism.nameSTAPHYLOCOCCUS AUREUS" =1))
-
-ampamox.robust <- funinteff(ampamox.m2, "year") # worth noting that due to grep in funinteff estimates for 
-# age in years gets pulled out too. This can be safely dropped. 
+ampamox.robust <- funinteff(ampamox.m, "year") # worth noting that due to grep in funinteff estimates for 
+# age in years gets pulled out too. These can be safely dropped. 
 ampamox.robust$z <- ampamox.robust$Estimate/ampamox.robust$SE
 ampamox.robust$p <- 2*pnorm(-abs(ampamox.robust$z))
-rm(ampamox)
+rm(ampamox, ampamox.m, ampamox.m2)
 
-# cla
-cla <- subset(df, cla.tested == 1)
-cla <- cla[complete.cases(cla[,c(2, 16, 17, 14, 9, 46, 45)]),]  # complete for variables to be adjusted
+
+# cla ####
+cla <- subset(df, cla.tested == 1 & uniq == 1)
 cla$cla.resistant[is.na(cla$cla.resistant)==TRUE] <- 0
 length(cla$cla.tested)
 table(cla$cla.resistant, useNA = "ifany")
 
-cla.m <- glm(cla.resistant ~ year + organism.name + factor(quarter) + postcode.derived.region.name +
-               specimen.source.type.description + male + age2, data = cla, family = "poisson")
+# H. influenzae
+cla.hi <- cla[cla$organism.name == "HAEMOPHILUS INFLUENZAE",] # not using subset due to weird R things happening with subset.
+cla.hi <- cla.hi[complete.cases(cla.hi[,c(18, 14, 10, 43, 44)]),]  # complete for variables to be adjusted
+length(cla.hi$cla.tested)
+table(cla.hi$cla.resistant, useNA = "ifany")
 
-cla.m2 <- glm(cla.resistant ~ year * organism.name + factor(quarter) + postcode.derived.region.name +
-                specimen.source.type.description + male + age2, data = cla, family = "poisson")
-epicalc::lrtest(cla.m, cla.m2)
+cla.m <- glm(cla.resistant ~ year + age2 + factor(quarter) + postcode.derived.region.name +
+                specimen.source.type.description + male, data = cla.hi, family = "poisson")
 
-cla.robust <- funinteff(cla.m2, "year")
-cla.robust$z <- cla.robust$Estimate/cla.robust$SE
-cla.robust$p <- 2*pnorm(-abs(cla.robust$z))
-cla.robust
-rm(cla.m, cla)
+cla.m.simple <- glm(cla.resistant ~ year, data = cla.hi, family = "poisson")
 
-# dox
-dox <- subset(df, dox.tested == 1)
-dox <- dox[complete.cases(dox[,c(2, 16, 17, 14, 9, 46, 45)]),]  # complete for variables to be adjusted
+
+cla.m2 <- glm(cla.resistant ~ year * age2 + factor(quarter) + postcode.derived.region.name +
+                specimen.source.type.description + male, data = cla.hi, family = "poisson")
+
+cla.hi.robust <- funinteff(cla.m2, "year")
+cla.hi.robust$z <- cla.hi.robust$Estimate/cla.hi.robust$SE
+cla.hi.robust$p <- 2*pnorm(-abs(cla.hi.robust$z))
+cla.hi.robust
+rm(cla.m2, cla.hi)
+
+# S. aureus
+cla.sa <- cla[cla$organism.name == "STAPHYLOCOCCUS AUREUS",]
+#cla.sa <- subset(cla, organism.name == "STREPTOCOCCUS PNEUMONIAE")
+cla.sa <- cla.sa[complete.cases(cla.sa[,c(18, 14, 10, 43, 44)]),]  # complete for variables to be adjusted
+length(cla.sa$cla.tested)
+table(cla.sa$cla.resistant, useNA = "ifany")
+
+cla.m2 <- glm(cla.resistant ~ year * age2 + factor(quarter) + postcode.derived.region.name +
+                specimen.source.type.description + male, data = cla.sa, family = "poisson")
+
+cla.sa.robust <- funinteff(cla.m2, "year")
+cla.sa.robust$z <- cla.sa.robust$Estimate/cla.sa.robust$SE
+cla.sa.robust$p <- 2*pnorm(-abs(cla.sa.robust$z))
+cla.sa.robust
+rm(cla.m2, cla.sa)
+
+# S. pneumoniae
+cla.sp <- cla[cla$organism.name == "STREPTOCOCCUS PNEUMONIAE",]
+#cla.sp <- subset(cla, organism.name == "STREPTOCOCCUS PNEUMONIAE")
+cla.sp <- cla.sp[complete.cases(cla.sp[,c(18, 14, 10, 43, 44)]),]  # complete for variables to be adjusted
+length(cla.sp$cla.tested)
+table(cla.sp$cla.resistant, useNA = "ifany")
+
+cla.m2 <- glm(cla.resistant ~ year * age2 + factor(quarter) + postcode.derived.region.name +
+                specimen.source.type.description + male, data = cla.sp, family = "poisson")
+
+cla.sp.robust <- funinteff(cla.m2, "year")
+cla.sp.robust$z <- cla.sp.robust$Estimate/cla.sp.robust$SE
+cla.sp.robust$p <- 2*pnorm(-abs(cla.sp.robust$z))
+cla.sp.robust
+rm(cla.m2, cla.sp, cla)
+
+
+# dox ####
+dox <- subset(df, dox.tested == 1 & uniq == 1)
 dox$dox.resistant[is.na(dox$dox.resistant)==TRUE] <- 0
 length(dox$dox.tested)
 table(dox$dox.resistant, useNA = "ifany")
 
-dox.m <- glm(dox.resistant ~ year + organism.name + factor(quarter) + postcode.derived.region.name +
-               specimen.source.type.description + male + age2, data = dox, family = "poisson")
+# H. influenzae
+dox.hi <- dox[dox$organism.name == "HAEMOPHILUS INFLUENZAE",]
+#dox.hi <- subset(dox, organism.name == "HAEMOPHILUS INFLUENZAE")
+dox.hi <- dox.hi[complete.cases(dox.hi[,c(18, 14, 10, 43, 44)]),]  # complete for variables to be adjusted
+length(dox.hi$dox.tested)
+table(dox.hi$dox.resistant, useNA = "ifany")
 
-dox.m2 <- glm(dox.resistant ~ year * organism.name + factor(quarter) + postcode.derived.region.name +
-                specimen.source.type.description + male + age2, data = dox, family = "poisson")
-epicalc::lrtest(dox.m, dox.m2)
+dox.m2 <- glm(dox.resistant ~ year * age2 + factor(quarter) + postcode.derived.region.name +
+                specimen.source.type.description + male, data = dox.hi, family = "poisson")
 
-dox.robust <- funinteff(dox.m2, "year")
-dox.robust$z <- dox.robust$Estimate/dox.robust$SE
-dox.robust$p <- 2*pnorm(-abs(dox.robust$z))
-dox.robust
-rm(dox.m, dox)
+dox.hi.robust <- funinteff(dox.m2, "year")
+dox.hi.robust$z <- dox.hi.robust$Estimate/dox.hi.robust$SE
+dox.hi.robust$p <- 2*pnorm(-abs(dox.hi.robust$z))
+dox.hi.robust
+rm(dox.m2, dox.hi)
 
-# cef
-cef <- subset(df, rec.cef.tested == 1)
-cef <- cef[complete.cases(cef[,c(2, 16, 17, 14, 9, 46, 45)]),]  # complete for variables to be adjusted
-cef$rec.cef.resistant[is.na(cef$rec.cef.resistant)==TRUE] <- 0
-length(cef$rec.cef.tested)
-table(cef$rec.cef.resistant, useNA = "ifany")
+# S. aureus
+dox.sa <- dox[dox$organism.name == "STAPHYLOCOCCUS AUREUS",]
+#dox.sa <- subset(dox, organism.name == "STAPHYLOCOCCUS AUREUS")
+dox.sa <- dox.sa[complete.cases(dox.sa[,c(18, 14, 10, 43, 44)]),]  # complete for variables to be adjusted
+length(dox.sa$dox.tested)
+table(dox.sa$dox.resistant, useNA = "ifany")
 
-cef.m <- glm(rec.cef.resistant ~ year + organism.name + factor(quarter) + postcode.derived.region.name +
-               specimen.source.type.description + male + age2, data = cef, family = "poisson")
+dox.m2 <- glm(dox.resistant ~ year * age2 + factor(quarter) + postcode.derived.region.name +
+                specimen.source.type.description + male, data = dox.sa, family = "poisson")
 
-cef.m2 <- glm(rec.cef.resistant ~ year * organism.name + factor(quarter) + postcode.derived.region.name +
-                specimen.source.type.description + male + age2, data = cef, family = "poisson")
-epicalc::lrtest(cef.m, cef.m2)
+dox.sa.robust <- funinteff(dox.m2, "year")
+dox.sa.robust$z <- dox.sa.robust$Estimate/dox.sa.robust$SE
+dox.sa.robust$p <- 2*pnorm(-abs(dox.sa.robust$z))
+dox.sa.robust
+rm(dox.m2, dox.sa)
 
-cef.robust <- funinteff(cef.m2, "year")
-cef.robust$z <- cef.robust$Estimate/cef.robust$SE
-cef.robust$p <- 2*pnorm(-abs(cef.robust$z))
-cef.robust
-rm(cef.m, cef)
+# S. pneumoniae
+dox.sp <- dox[dox$organism.name == "STREPTOCOCCUS PNEUMONIAE",]
+#dox.sp <- subset(dox, organism.name == "STREPTOCOCCUS PNEUMONIAE")
+dox.sp <- dox.sp[complete.cases(dox.sp[,c(18, 14, 10, 43, 44)]),]  # complete for variables to be adjusted
+length(dox.sp$dox.tested)
+table(dox.sp$dox.resistant, useNA = "ifany")
 
-# combine ####
-ampamox.robust$abx <- "Ampicillin"
-cef.robust$abx <- "Any recommended cephalosporin"
-dox.robust$abx <- "Doxycycline"
-cla.robust$abx <- "Clarithromycin"
+dox.m2 <- glm(dox.resistant ~ year * age2 + factor(quarter) + postcode.derived.region.name +
+                specimen.source.type.description + male, data = dox.sp, family = "poisson")
 
-# dropping mis-grepped rows
-ampamox.robust <- ampamox.robust[c(1,5,6),]
-cla.robust <- cla.robust[c(1,5,6),]
-dox.robust <- dox.robust[c(1,5,6),]
-cef.robust <- cef.robust[c(1,5,6),]
+dox.sp.robust <- funinteff(dox.m2, "year")
+dox.sp.robust$z <- dox.sp.robust$Estimate/dox.sp.robust$SE
+dox.sp.robust$p <- 2*pnorm(-abs(dox.sp.robust$z))
+dox.sp.robust
+rm(dox.m2, dox.sp, dox)
 
-col <- rbind(ampamox.robust, cef.robust, dox.robust, cla.robust)
-col$organism <- row.names(col)
-row.names(col) <- seq(1,length(col$organism),1)
-col$organism[col$organism == "year" | col$organism == "year1" | col$organism == "year2" | 
-               col$organism == "year3"] <- "H. influenzae"
-col$organism[col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS" | 
-               col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS1" | 
-               col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS2" | 
-               col$organism == "year:organism.nameSTAPHYLOCOCCUS AUREUS3"] <- "S. aureus"
-col$organism[col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE" | 
-               col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE1" | 
-               col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE2" | 
-               col$organism == "year:organism.nameSTREPTOCOCCUS PNEUMONIAE3"] <- "S. pneumoniae"
-
-col$irr <- exp(col$Estimate)
-col$lci <- col$irr / exp(1.96*col$SE)
-col$uci <- col$irr * exp(1.96*col$SE)
-col <- col[,names(col)=="abx" | names(col)=="organism" | names(col)=="irr" | names(col)=="lci" | 
-             names(col)=="uci" | names(col)=="p"]
+# new combine ####
+abx <- c("amp", rep("cla", 5), rep("dox",5))
+age <- c("-", "$<45$", "45-64", "65-74", "$\\geq 75$", "Unknown", "$<45$", "45-64", "65-74", 
+         "$\\geq 75$", "Unknown")
+h.influenzae <- rep(NA, 11)
+s.aureus <- rep(NA, 11)
+s.pneumoniae <- rep(NA, 11)
+col <- as.data.frame(cbind(abx, age, h.influenzae, s.aureus, s.pneumoniae), stringsAsFactors = FALSE)
 col
-col$irr95ci <- paste(sprintf("%.2f", round(col$irr, 2)), " (", sprintf("%.2f", round(col$lci, 2)),
-                     " - ", sprintf("%.2f", round(col$uci, 2)), ")", sep = ""
-)
-col2 <- col[, names(col)=="abx" | names(col)=="organism" | names(col)=="irr95ci"]
+rm(age, abx, h.influenze, s.aureus, s.pneumoniae)
 
-c.col <- dcast(col2, organism ~ abx)
-c.col
-names(c.col)[1] <- "Organism"
-c.col <- xtable(c.col, 
-  caption = "Incident rate ratios for annual change in susceptibility to recommended antimicrobials, England, Wales and Northern Ireland 2008-2013.
+# amp
+col$h.influenzae[col$abx=="amp"] <- paste(sprintf("%.2f", round(exp(ampamox.robust$Estimate[1]), 2)), " (",
+                sprintf("%.2f", round(exp(ampamox.robust$Estimate[1])/exp(1.96*ampamox.robust$SE[1]) ,2)), "-",
+                sprintf("%.2f", round(exp(ampamox.robust$Estimate[1])*exp(1.96*ampamox.robust$SE[1]) ,2)), ")",
+                                          sep = "")
+
+col$s.aureus[col$abx=="amp"] <- paste(sprintf("%.2f", round(exp(ampamox.robust$Estimate[5]), 2)), " (",
+                                          sprintf("%.2f", round(exp(ampamox.robust$Estimate[5])/exp(1.96*ampamox.robust$SE[5]) ,2)), "-",
+                                          sprintf("%.2f", round(exp(ampamox.robust$Estimate[5])*exp(1.96*ampamox.robust$SE[5]) ,2)), ")",
+                                          sep = "")
+
+col$s.pneumoniae[col$abx=="amp"] <- paste(sprintf("%.2f", round(exp(ampamox.robust$Estimate[6]), 2)), " (",
+                                      sprintf("%.2f", round(exp(ampamox.robust$Estimate[6])/exp(1.96*ampamox.robust$SE[6]) ,2)), "-",
+                                      sprintf("%.2f", round(exp(ampamox.robust$Estimate[6])*exp(1.96*ampamox.robust$SE[6]) ,2)), ")",
+                                      sep = "")
+
+# cla
+col$h.influenzae[col$abx=="cla" & col$age == "$<45$"] <- paste(sprintf("%.2f", round(exp(cla.hi.robust$Estimate[1]), 2)), " (",
+                                          sprintf("%.2f", round(exp(cla.hi.robust$Estimate[1])/exp(1.96*cla.hi.robust$SE[1]) ,2)), "-",
+                                          sprintf("%.2f", round(exp(cla.hi.robust$Estimate[1])*exp(1.96*cla.hi.robust$SE[1]) ,2)), ")",
+                                          sep = "")
+
+col$h.influenzae[col$abx=="cla" & col$age == "45-64"] <- paste(sprintf("%.2f", round(exp(cla.hi.robust$Estimate[5]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(cla.hi.robust$Estimate[5])/exp(1.96*cla.hi.robust$SE[5]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(cla.hi.robust$Estimate[5])*exp(1.96*cla.hi.robust$SE[5]) ,2)), ")",
+                                                               sep = "")
+
+col$h.influenzae[col$abx=="cla" & col$age == "65-74"] <- paste(sprintf("%.2f", round(exp(cla.hi.robust$Estimate[6]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(cla.hi.robust$Estimate[6])/exp(1.96*cla.hi.robust$SE[6]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(cla.hi.robust$Estimate[6])*exp(1.96*cla.hi.robust$SE[6]) ,2)), ")",
+                                                               sep = "")
+
+col$h.influenzae[col$abx=="cla" & col$age == "$\\geq 75$"] <- paste(sprintf("%.2f", round(exp(cla.hi.robust$Estimate[7]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(cla.hi.robust$Estimate[7])/exp(1.96*cla.hi.robust$SE[7]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(cla.hi.robust$Estimate[7])*exp(1.96*cla.hi.robust$SE[7]) ,2)), ")",
+                                                               sep = "")
+
+col$h.influenzae[col$abx=="cla" & col$age == "Unknown"] <- paste(sprintf("%.2f", round(exp(cla.hi.robust$Estimate[8]), 2)), " (",
+                                                                    sprintf("%.2f", round(exp(cla.hi.robust$Estimate[8])/exp(1.96*cla.hi.robust$SE[8]) ,2)), "-",
+                                                                    sprintf("%.2f", round(exp(cla.hi.robust$Estimate[8])*exp(1.96*cla.hi.robust$SE[8]) ,2)), ")",
+                                                                    sep = "")
+# cla s. aureus
+col$s.aureus[col$abx=="cla" & col$age == "$<45$"] <- paste(sprintf("%.2f", round(exp(cla.sa.robust$Estimate[1]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(cla.sa.robust$Estimate[1])/exp(1.96*cla.sa.robust$SE[1]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(cla.sa.robust$Estimate[1])*exp(1.96*cla.sa.robust$SE[1]) ,2)), ")",
+                                                               sep = "")
+
+col$s.aureus[col$abx=="cla" & col$age == "45-64"] <- paste(sprintf("%.2f", round(exp(cla.sa.robust$Estimate[5]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(cla.sa.robust$Estimate[5])/exp(1.96*cla.sa.robust$SE[5]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(cla.sa.robust$Estimate[5])*exp(1.96*cla.sa.robust$SE[5]) ,2)), ")",
+                                                               sep = "")
+
+col$s.aureus[col$abx=="cla" & col$age == "65-74"] <- paste(sprintf("%.2f", round(exp(cla.sa.robust$Estimate[6]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(cla.sa.robust$Estimate[6])/exp(1.96*cla.sa.robust$SE[6]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(cla.sa.robust$Estimate[6])*exp(1.96*cla.sa.robust$SE[6]) ,2)), ")",
+                                                               sep = "")
+
+col$s.aureus[col$abx=="cla" & col$age == "$\\geq 75$"] <- paste(sprintf("%.2f", round(exp(cla.sa.robust$Estimate[7]), 2)), " (",
+                                                                    sprintf("%.2f", round(exp(cla.sa.robust$Estimate[7])/exp(1.96*cla.sa.robust$SE[7]) ,2)), "-",
+                                                                    sprintf("%.2f", round(exp(cla.sa.robust$Estimate[7])*exp(1.96*cla.sa.robust$SE[7]) ,2)), ")",
+                                                                    sep = "")
+
+col$s.aureus[col$abx=="cla" & col$age == "Unknown"] <- paste(sprintf("%.2f", round(exp(cla.sa.robust$Estimate[8]), 2)), " (",
+                                                                 sprintf("%.2f", round(exp(cla.sa.robust$Estimate[8])/exp(1.96*cla.sa.robust$SE[8]) ,2)), "-",
+                                                                 sprintf("%.2f", round(exp(cla.sa.robust$Estimate[8])*exp(1.96*cla.sa.robust$SE[8]) ,2)), ")",
+                                                                 sep = "")
+
+# cla s. pneumo
+col$s.pneumoniae[col$abx=="cla" & col$age == "$<45$"] <- paste(sprintf("%.2f", round(exp(cla.sp.robust$Estimate[1]), 2)), " (",
+                                                           sprintf("%.2f", round(exp(cla.sp.robust$Estimate[1])/exp(1.96*cla.sp.robust$SE[1]) ,2)), "-",
+                                                           sprintf("%.2f", round(exp(cla.sp.robust$Estimate[1])*exp(1.96*cla.sp.robust$SE[1]) ,2)), ")",
+                                                           sep = "")
+
+col$s.pneumoniae[col$abx=="cla" & col$age == "45-64"] <- paste(sprintf("%.2f", round(exp(cla.sp.robust$Estimate[5]), 2)), " (",
+                                                           sprintf("%.2f", round(exp(cla.sp.robust$Estimate[5])/exp(1.96*cla.sp.robust$SE[5]) ,2)), "-",
+                                                           sprintf("%.2f", round(exp(cla.sp.robust$Estimate[5])*exp(1.96*cla.sp.robust$SE[5]) ,2)), ")",
+                                                           sep = "")
+
+col$s.pneumoniae[col$abx=="cla" & col$age == "65-74"] <- paste(sprintf("%.2f", round(exp(cla.sp.robust$Estimate[6]), 2)), " (",
+                                                           sprintf("%.2f", round(exp(cla.sp.robust$Estimate[6])/exp(1.96*cla.sp.robust$SE[6]) ,2)), "-",
+                                                           sprintf("%.2f", round(exp(cla.sp.robust$Estimate[6])*exp(1.96*cla.sp.robust$SE[6]) ,2)), ")",
+                                                           sep = "")
+
+col$s.pneumoniae[col$abx=="cla" & col$age == "$\\geq 75$"] <- paste(sprintf("%.2f", round(exp(cla.sp.robust$Estimate[7]), 2)), " (",
+                                                                sprintf("%.2f", round(exp(cla.sp.robust$Estimate[7])/exp(1.96*cla.sp.robust$SE[7]) ,2)), "-",
+                                                                sprintf("%.2f", round(exp(cla.sp.robust$Estimate[7])*exp(1.96*cla.sp.robust$SE[7]) ,2)), ")",
+                                                                sep = "")
+
+col$s.pneumoniae[col$abx=="cla" & col$age == "Unknown"] <- paste(sprintf("%.2f", round(exp(cla.sp.robust$Estimate[8]), 2)), " (",
+                                                             sprintf("%.2f", round(exp(cla.sp.robust$Estimate[8])/exp(1.96*cla.sp.robust$SE[8]) ,2)), "-",
+                                                             sprintf("%.2f", round(exp(cla.sp.robust$Estimate[8])*exp(1.96*cla.sp.robust$SE[8]) ,2)), ")",
+                                                             sep = "")
+
+
+# dox
+col$h.influenzae[col$abx=="dox" & col$age == "$<45$"] <- paste(sprintf("%.2f", round(exp(dox.hi.robust$Estimate[1]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(dox.hi.robust$Estimate[1])/exp(1.96*dox.hi.robust$SE[1]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(dox.hi.robust$Estimate[1])*exp(1.96*dox.hi.robust$SE[1]) ,2)), ")",
+                                                               sep = "")
+
+col$h.influenzae[col$abx=="dox" & col$age == "45-64"] <- paste(sprintf("%.2f", round(exp(dox.hi.robust$Estimate[5]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(dox.hi.robust$Estimate[5])/exp(1.96*dox.hi.robust$SE[5]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(dox.hi.robust$Estimate[5])*exp(1.96*dox.hi.robust$SE[5]) ,2)), ")",
+                                                               sep = "")
+
+col$h.influenzae[col$abx=="dox" & col$age == "65-74"] <- paste(sprintf("%.2f", round(exp(dox.hi.robust$Estimate[6]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(dox.hi.robust$Estimate[6])/exp(1.96*dox.hi.robust$SE[6]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(dox.hi.robust$Estimate[6])*exp(1.96*dox.hi.robust$SE[6]) ,2)), ")",
+                                                               sep = "")
+
+col$h.influenzae[col$abx=="dox" & col$age == "$\\geq 75$"] <- paste(sprintf("%.2f", round(exp(dox.hi.robust$Estimate[7]), 2)), " (",
+                                                                    sprintf("%.2f", round(exp(dox.hi.robust$Estimate[7])/exp(1.96*dox.hi.robust$SE[7]) ,2)), "-",
+                                                                    sprintf("%.2f", round(exp(dox.hi.robust$Estimate[7])*exp(1.96*dox.hi.robust$SE[7]) ,2)), ")",
+                                                                    sep = "")
+
+col$h.influenzae[col$abx=="dox" & col$age == "Unknown"] <- paste(sprintf("%.2f", round(exp(dox.hi.robust$Estimate[8]), 2)), " (",
+                                                                 sprintf("%.2f", round(exp(dox.hi.robust$Estimate[8])/exp(1.96*dox.hi.robust$SE[8]) ,2)), "-",
+                                                                 sprintf("%.2f", round(exp(dox.hi.robust$Estimate[8])*exp(1.96*dox.hi.robust$SE[8]) ,2)), ")",
+                                                                 sep = "")
+# dox s. aureus
+col$s.aureus[col$abx=="dox" & col$age == "$<45$"] <- paste(sprintf("%.2f", round(exp(dox.sa.robust$Estimate[1]), 2)), " (",
+                                                           sprintf("%.2f", round(exp(dox.sa.robust$Estimate[1])/exp(1.96*dox.sa.robust$SE[1]) ,2)), "-",
+                                                           sprintf("%.2f", round(exp(dox.sa.robust$Estimate[1])*exp(1.96*dox.sa.robust$SE[1]) ,2)), ")",
+                                                           sep = "")
+
+col$s.aureus[col$abx=="dox" & col$age == "45-64"] <- paste(sprintf("%.2f", round(exp(dox.sa.robust$Estimate[5]), 2)), " (",
+                                                           sprintf("%.2f", round(exp(dox.sa.robust$Estimate[5])/exp(1.96*dox.sa.robust$SE[5]) ,2)), "-",
+                                                           sprintf("%.2f", round(exp(dox.sa.robust$Estimate[5])*exp(1.96*dox.sa.robust$SE[5]) ,2)), ")",
+                                                           sep = "")
+
+col$s.aureus[col$abx=="dox" & col$age == "65-74"] <- paste(sprintf("%.2f", round(exp(dox.sa.robust$Estimate[6]), 2)), " (",
+                                                           sprintf("%.2f", round(exp(dox.sa.robust$Estimate[6])/exp(1.96*dox.sa.robust$SE[6]) ,2)), "-",
+                                                           sprintf("%.2f", round(exp(dox.sa.robust$Estimate[6])*exp(1.96*dox.sa.robust$SE[6]) ,2)), ")",
+                                                           sep = "")
+
+col$s.aureus[col$abx=="dox" & col$age == "$\\geq 75$"] <- paste(sprintf("%.2f", round(exp(dox.sa.robust$Estimate[7]), 2)), " (",
+                                                                sprintf("%.2f", round(exp(dox.sa.robust$Estimate[7])/exp(1.96*dox.sa.robust$SE[7]) ,2)), "-",
+                                                                sprintf("%.2f", round(exp(dox.sa.robust$Estimate[7])*exp(1.96*dox.sa.robust$SE[7]) ,2)), ")",
+                                                                sep = "")
+
+col$s.aureus[col$abx=="dox" & col$age == "Unknown"] <- paste(sprintf("%.2f", round(exp(dox.sa.robust$Estimate[8]), 2)), " (",
+                                                             sprintf("%.2f", round(exp(dox.sa.robust$Estimate[8])/exp(1.96*dox.sa.robust$SE[8]) ,2)), "-",
+                                                             sprintf("%.2f", round(exp(dox.sa.robust$Estimate[8])*exp(1.96*dox.sa.robust$SE[8]) ,2)), ")",
+                                                             sep = "")
+
+# dox s. pneumo
+col$s.pneumoniae[col$abx=="dox" & col$age == "$<45$"] <- paste(sprintf("%.2f", round(exp(dox.sp.robust$Estimate[1]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(dox.sp.robust$Estimate[1])/exp(1.96*dox.sp.robust$SE[1]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(dox.sp.robust$Estimate[1])*exp(1.96*dox.sp.robust$SE[1]) ,2)), ")",
+                                                               sep = "")
+
+col$s.pneumoniae[col$abx=="dox" & col$age == "45-64"] <- paste(sprintf("%.2f", round(exp(dox.sp.robust$Estimate[5]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(dox.sp.robust$Estimate[5])/exp(1.96*dox.sp.robust$SE[5]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(dox.sp.robust$Estimate[5])*exp(1.96*dox.sp.robust$SE[5]) ,2)), ")",
+                                                               sep = "")
+
+col$s.pneumoniae[col$abx=="dox" & col$age == "65-74"] <- paste(sprintf("%.2f", round(exp(dox.sp.robust$Estimate[6]), 2)), " (",
+                                                               sprintf("%.2f", round(exp(dox.sp.robust$Estimate[6])/exp(1.96*dox.sp.robust$SE[6]) ,2)), "-",
+                                                               sprintf("%.2f", round(exp(dox.sp.robust$Estimate[6])*exp(1.96*dox.sp.robust$SE[6]) ,2)), ")",
+                                                               sep = "")
+
+col$s.pneumoniae[col$abx=="dox" & col$age == "$\\geq 75$"] <- paste(sprintf("%.2f", round(exp(dox.sp.robust$Estimate[7]), 2)), " (",
+                                                                    sprintf("%.2f", round(exp(dox.sp.robust$Estimate[7])/exp(1.96*dox.sp.robust$SE[7]) ,2)), "-",
+                                                                    sprintf("%.2f", round(exp(dox.sp.robust$Estimate[7])*exp(1.96*dox.sp.robust$SE[7]) ,2)), ")",
+                                                                    sep = "")
+
+col$s.pneumoniae[col$abx=="dox" & col$age == "Unknown"] <- paste(sprintf("%.2f", round(exp(dox.sp.robust$Estimate[8]), 2)), " (",
+                                                                 sprintf("%.2f", round(exp(dox.sp.robust$Estimate[8])/exp(1.96*dox.sp.robust$SE[8]) ,2)), "-",
+                                                                 sprintf("%.2f", round(exp(dox.sp.robust$Estimate[8])*exp(1.96*dox.sp.robust$SE[8]) ,2)), ")",
+                                                                 sep = "")
+
+
+col
+
+# Tidy up
+names(col) <- c("Antibiotic", "\\shortstack{Age \\\\group}", "\\textit{H. influenzae}", "\\textit{S. aureus}", 
+                "\\textit{S. pneumoniae}")
+
+col$Antibiotic <- c("\\shortstack{Ampicillin/\\\\amoxicillin}", "Clarithromycin", "", "", "", "", 
+                    "Doxycycline", "", "", "", "" )
+col[11, 5] <- "-" # remove NA for S. pneumo&dox as no observations.
+
+sum(df$uniq[df$organism.name=="STREPTOCOCCUS PNEUMONIAE" & df$age2 == "Unknown"])
+sum(df$dox.tested[df$organism.name=="STREPTOCOCCUS PNEUMONIAE" & df$age2 == "Unknown"], na.rm = TRUE)
+
+col
+
+col <- xtable(col, 
+                caption = "Incident rate ratios for annual change in susceptibility to recommended antimicrobials, England, Wales and Northern Ireland 2008-2013.
    Adjusted for calendar quarter, laboratory region, specimen source, male sex and patient age.", 
                 label = "table1")
 sink("table1.txt")
-print(c.col, include.rownames = FALSE, booktabs = TRUE)
+print(col)
 sink()
-rm(ampamox.robust, cef.robust, cla.robust, dox.robust, col, col2, c.col, cef.m2, cla.m2, ampamox.m2, dox.m2, 
-   ampamox.m)
+
+rm(ampamox.robust, cla.hi.robust, cla.m, cla.m.simple, cla.sa.robust, cla.sp.robust, col, dox.hi.robust, 
+   dox.sa.robust, dox.sp.robust, funinteff, h.influenzae, lincom, orCalc, percent, percent2, sehac, simpleCap, 
+   yr.trend)
