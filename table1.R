@@ -409,7 +409,7 @@ col <- xtable(col,
    Adjusted for calendar quarter, laboratory region, specimen source, male sex and patient age.", 
                 label = "table1")
 sink("table1.txt")
-print(col)
+print(col, sanitize.text.function = function(x){x})
 sink()
 
 rm(ampamox.robust, cla.hi.robust, cla.m, cla.m.simple, cla.sa.robust, cla.sp.robust, col, dox.hi.robust, 
