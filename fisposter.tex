@@ -57,8 +57,8 @@
 %\begin{tikzpicture}[remember picture,overlay]
 %\node[anchor=north east,yshift=2pt] at (current page.north east) %{\includegraphics[height=0.8cm]{white_phe_logo.png}};
 %\end{tikzpicture}}
-
-\title[AMR trends in respiratory isolates]{Trends in the antibiotic susceptibilities of \textit{Haemophilus influenzae}, \textit{Streptococcus pneumoniae} and \textit{Staphylococcus aureus} from respiratory isolates in England, Wales and Northern Ireland, 2008-2013}
+%AMR trends in respiratory isolates
+\title[simon.thelwall@phe.gov.uk]{Trends in the antibiotic susceptibilities of \textit{Haemophilus influenzae}, \textit{Streptococcus pneumoniae} and \textit{Staphylococcus aureus} from respiratory isolates in England, Wales and Northern Ireland, 2008-2013}
 \author{Simon Thelwall\inst{1}
 \and
 Rebecca Guy\inst{1}
@@ -125,7 +125,7 @@ Data on isolates of \textit{H. influenzae}, \textit{S. aureus} and \textit{S. pn
    %% Need information on interactions here. 
    Age, sex, year, calendar quarter and region were considered potential confounders and were adjusted for accordingly.
    Interactions between age and sex were tested for using likelihood ratio tests. 
-   All analyses were performed using R version 3.0.0 and ArcGIS\texttrademark v10 and code can be found at \url{https://github.com/simonthelwall/fis2013}.
+   All analyses were performed using R version 3.0.0 and ArcGIS\texttrademark version 10 and code can be found at \url{https://github.com/simonthelwall/fis2013}.
   \end{block}
   
 \begin{block}{\textcolor{comp_blue}{R}}  
@@ -143,15 +143,14 @@ Data on isolates of \textit{H. influenzae}, \textit{S. aureus} and \textit{S. pn
 % \begin{block}{\textcolor{comp_blue}{R}}
   \begin{block}{Results}
    Between January 2008 and June 2013 180 499 isolates were reported by 142 labs. 
-   Ninety six per cent (173 854) of isolates were from sputum and 125 968 (70 \%) were from patients presenting to GPs. \\
+   Ninety-six per cent (173 854) of isolates were from sputum and 125 968 (70 \%) were from patients presenting to GPs. \\
    Between January 2008 and June 2013, there was a consistent increase in the numbers of isolates reported for each organism (figure \ref{fig:fig1}).\\
-Resistance to the empiric treatment ampicillin/amoxicillin increased for all three organisms between 2008 and 2013 (\textit{H. influenzae} 23.4\% to 26.3\%, IRR: 1.03, p\textless0.001, \textit{S. aureus} 75.0\% to 80.2\%, IRR: 1.01, p=0.141 and \textit{S. pneumoniae} 2.1\% to 3.9\%, IRR 1.12, p=0.001, figure \ref{fig:fig2} and table \ref{tab:table1}).\\
-   Overall, 3354 (25.43\%, 95\% CI 24.69 - 26.18) of all isolates tested in 2013 were resistant to amoxicillin. \\% Need data for this. Table/figure?
-   % Figure 2 resistance to amoxicillin
-   % Figure 3 resistance to tetracyclines (in particular clarithromycin)
-   % Figure 4 resistance to cephalosporins 
-   % Trends by age and sex? What is driving increase in resistance?
-   Little variation in the proportion of isolates resistant was seen by region (figure \ref{fig:maps}). 
+Resistance to the empiric treatment ampicillin/amoxicillin increased for all three organisms between 2008 and 2013 (\textit{H. influenzae} 23.4 \% to 26.3 \%, IRR: 1.03, p\textless0.001, \textit{S. aureus} 75.0 \% to 80.2 \%, IRR: 1.01, p=0.141 and \textit{S. pneumoniae} 2.1 \% to 3.9 \%, IRR 1.12, p=0.001, figure \ref{fig:fig2} and table \ref{tab:table1}).
+   Overall, 3354 (25.43 \%, 95 \% CI 24.69 - 26.18) of all isolates tested in 2013 were resistant to amoxicillin. \\
+   The change in resistance to clarithromycin and doxycycline varied according to age group. 
+   The most rapid change in resistance to clarithromycin occurred in the xxx age group for \textit{H. influenzae} and \textit{S. pneumoniae}. 
+   For doxycycline, the most rapid changes occurred in the xxx age groups for \textit{S. aureus} and xxx age groups for \textit{S. pneumoniae}. Doxycycline resistance decreased across all age groups in \textit{H. influenzae} isolates.\\
+   Little variation in the proportion of isolates resistant by region was observed (figure \ref{fig:maps}). 
    Resistance to clarithromycin among \textit{S. aureus} isolates was higher in the South East, South West and London regions. 
    Resitance to clarithromycin among \textit{S. pneumoniae} isolates was higher in London than in other regions. \\
    \vspace{1 cm}
@@ -188,9 +187,9 @@ Doxycycline & $<45$ & 1.00 (0.90 - 1.10) & 1.00 (0.90 - 1.10) & 1.00 (0.90 - 1.1
   \begin{block}{Discussion}
   Over the last five years we have observed increasing resistance to the first-line antibiotics recommended for treating bacterial pneumonia in the community.
 Among \textit{S. pneumoniae} isolates there have been rises in resistance to a wide range of antibiotics. 
-Whether the increases in resistances observed here are due to genuine increases in resistance or whether they are due to increased testing and reporting is diffcult to determine. 
+Whether the increases in resistances observed here are due to genuine increases in resistance or whether they are due to increased testing and reporting is diffcult to determine. \\
 The limited regional variation in resistance is perhaps surprising given that a recent study of community LRTI and community-acquired pneumonia (CAP) among older adults found a strong North-South gradient in incidence. \citep{Millett2013}
-However, analysis of regional variation resistance is limited by variation in regional reporting to LabBase. 
+However, analysis of regional variation resistance is limited by variation in regional reporting to LabBase. \\
 Resistance to antimicrobials is known to be associated with serotype in \textit{S. pneumoniae} and further examination of serotype data may provide more information on the recent rises in resistance observed in \textit{S. pneumoniae} isolates.
 %  \end{block}    
    \vspace{1 cm}
@@ -217,13 +216,13 @@ Resistance to antimicrobials is known to be associated with serotype in \textit{
   \vfill   
    \begin{figure}
    \includegraphics[width = \textwidth]{maps.png}
-   \caption{Proportion of tested isolates resistant to given antibiotics by region. England, Wales and Northern Ireland January 2008 to June 2013.}
+   \caption{Proportion of tested isolates resistant to given antibiotics, and number of isolates tested, by region. England, Wales and Northern Ireland January 2008 to June 2013.}
    \label{fig:maps}
    \end{figure}
   \end{block}
   \vfill
     \begin{block}{References}
-   \bibliographystyle{plain}
+   \bibliographystyle{unsrt}
 \footnotesize{\bibliography{fis2013}}
    \vfill
   \end{block}
