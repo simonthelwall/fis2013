@@ -32,7 +32,7 @@ head(yr.trend.2)
 
 yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "ampamox"] <- "Ampicillin/\namoxicillin"
 yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "cla"] <- "Clarithromycin"
-yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "dox"] <- "Doxycylcine"
+yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "dox"] <- "Doxycycline"
 yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "rec_cef"] <- "Any recommended \n cephalosporin"
 #yr.trend.2$Antibiotic[yr.trend.2$Antibiotic == "Any recommended \\n cephalosporin"] <- "Any recommended \n cephalosporin" #oops
 
